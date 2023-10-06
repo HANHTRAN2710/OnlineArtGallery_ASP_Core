@@ -1,0 +1,284 @@
+﻿@using OnlineArtGallery.Models.Entities;
+@{
+    ViewBag.Title = "GalleryList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section main
+{
+    @model OnlineArtGallery.Models.Entities.Gallery
+
+    <div class="container-fluid mt-3">
+        <div class="block block-rounded">
+            <div class="block-header block-header-default">
+                <strong>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="">Create New Gallery</button>
+
+                </strong>
+                @if (Session["Message"] != null)
+                {
+                    <div class="alert alert-success" id="successMessage">@Session["Message"]</div>
+                    Session.Remove("Message");
+                    <script>
+                        // Set timeout for success message
+                        setTimeout(function () {
+                            $('#successMessage').fadeOut('slow');
+                        }, 3000); // 5000 milliseconds = 5 seconds
+                    </script>
+                }
+            </div>
+            <div class="block-content pb-3">
+                <div class="block-content tab-content ps-0 pe-0">
+                    <table class="table table-sm table-responsive table table-striped js-dataTable-responsive dataTable no-footer dtr-inline">
+                        <thead>
+                            <tr>
+                                <th>Number</th>
+                                <th>Name</th>
+                                <th>Img</th>
+                                <th style="width:350px">Description</th>
+                                <th>Artwork</th>
+                                <th>Created Date</th>
+                                <th>Add Artwork</th>
+                                <th>Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @functions
+                                {
+                                public List<OnlineArtGallery.Models.Entities.Artwork_Gallery> GetGallery(int id)
+                                {
+                                    GalleryArtEntities db = new GalleryArtEntities();
+                                    var galleryList = db.Artwork_Gallery.Where(a => a.gallery_id == id).ToList();
+                                    return galleryList;
+                                }
+                            }
+                            @{
+                                var s = 0;
+                            }
+                            @foreach (var gallery in ViewBag.GalleryList)
+                            {
+                                s += 1;
+                                <tr>
+                                    <td>@s</td>
+                                    <td>@gallery.gallery_name</td>
+                                    <td>
+                                        <img width="50px" src="~/Content/Assets/Images/galleryimg/@gallery.gallery_image" alt="Alternate Text" />
+                                    </td>
+                                    <td>@gallery.gallery_description</td>
+                                    <td>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#detail@(gallery.gallery_id)">
+                                            Detail
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="detail@(gallery.gallery_id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" style="max-width: 800px">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        Artwork List
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div>
+                                                            <div class="row">
+                                                                @foreach (var gal in GetGallery(@gallery.gallery_id))
+                                                                {
+                                                                    <div class="col-4 pb-3">
+                                                                        <span class="badge bg-success p-2">@gal.Gallery.gallery_name</span>
+                                                                        <br />
+
+                                                                    </div>
+                                                                }
+                                                            </div>
+
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@gallery.gallery_created_date</td>
+                                    <td>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#id@(gallery.gallery_id)">
+                                            Add
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="id@(gallery.gallery_id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" style="max-width: 1200px">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add artwork</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div>
+                                                            <form class="artworkForm">
+                                                                <div class="row">
+                                                                    @foreach (var art in ViewBag.ArtworkList)
+                                                                    {
+                                                                        <div class="col-3 pb-1">
+                                                                            <input id="id@(gallery.gallery_id)-@(art.artwork_id)" type="checkbox" class="artwork_check" data-id="@art.artwork_id" value="@art.artwork_id">
+                                                                            <label for="id@(gallery.gallery_id)-@(art.artwork_id)"><span class="badge bg-secondary p-2">@art.artwork_name</span></label>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                                <button data-galid="@gallery.gallery_id" type="submit" class="submitForm btn btn-primary mt-3">Submit</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var galle = "exampleModal" + @gallery.gallery_id;
+                                        }
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#@galle" data-bs-whatever="@gallery.gallery_id">Edit</button>
+                                        <div class="modal fade" id="@galle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Edit Gallery</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="post" action="@Url.Action("NewEdit", "BEGallery")" enctype="multipart/form-data">
+                                                            <input type="text" value="@gallery.gallery_id" name="gallery_id" class="form-control" hidden>
+                                                            <div class="mb-3">
+                                                                <label for="recipient-name" class="col-form-label">Name:</label>
+                                                                <input type="text" value="@gallery.gallery_name" name="gallery_name" class="form-control">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="recipient-name" class="col-form-label">Image:</label>
+                                                                <img width="150px" src="~/Content/assets/images/galleryimg/@gallery.gallery_image" alt="Alternate Text" />
+                                                                <input type="file" name="gallery_image" value="" />
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="message-text" class="col-form-label">Description:</label>
+                                                                <textarea class="form-control" name="gallery_description">@gallery.gallery_description</textarea>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button id="btnSave" type="submit" class="btn btn-primary">Submit</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    @*form add gallery*@
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Gallery</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="@Url.Action("NewGallery","BEGallery")" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Name *:</label>
+                            <input type="text" name="gallery_name" class="form-control" required="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Image:</label>
+                            <input type="file" name="gallery_image" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Description:</label>
+                            <textarea class="form-control" name="gallery_description"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @*//////*@
+
+}
+
+@section css
+{
+    <link rel="stylesheet" href="~/Content/adminassets/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="/Content/adminassets/js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="/Content/adminassets/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css">
+}
+
+@section scripts
+{
+    <!-- Page JS Plugins -->
+    <script src="/Content/adminassets/js/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/Content/adminassets/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="/Content/adminassets/js/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/Content/adminassets/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+    <script src="/Content/adminassets/js/plugins/datatables-buttons/dataTables.buttons.min.js"></script>
+    <script src="/Content/adminassets/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+    <script src="/Content/adminassets/js/plugins/datatables-buttons-jszip/jszip.min.js"></script>
+    <script src="/Content/adminassets/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js"></script>
+    <script src="/Content/adminassets/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js"></script>
+    <script src="/Content/adminassets/js/plugins/datatables-buttons/buttons.print.min.js"></script>
+    <script src="/Content/adminassets/js/plugins/datatables-buttons/buttons.html5.min.js"></script>
+    <!-- Page JS Code -->
+    <script src="/Content/adminassets/js/pages/be_tables_datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.artworkForm').submit(function (event) {
+                event.preventDefault();
+                var id = $('.submitForm').data('galid')
+                var arr = new Array();
+
+                $('.artwork_check').each(function (i) {
+                    if ($(this).is(':checked')) {
+                        var id = $(this).data('id')
+                        arr.push(id)
+                    }
+                })
+
+                console.log(arr)
+
+
+
+                $.ajax({
+                    url: '/BEGallery/AddArtwork',
+                    method: 'POST',
+                    data: {
+                        id: id,
+                        arr: arr,
+                    }
+                }).done(function (data) {
+                    if (data == "Success") {
+                        window.location.reload();
+                    }
+                });
+            });
+        });
+
+    </script>
+}
+

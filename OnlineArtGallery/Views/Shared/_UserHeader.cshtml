@@ -1,0 +1,234 @@
+﻿@using OnlineArtGallery.Models.Entities;
+@{
+    GalleryArtEntities db = new GalleryArtEntities();
+
+}
+
+<div class="header-top">
+    <div class="container">
+        <div class="header-left">
+            <a href="tel:#"><i class="icon-phone"></i>Call: +0123 456 789</a>
+        </div><!-- End .header-left -->
+
+        <div class="header-right">
+
+            <ul class="top-menu">
+                <li>
+                    <a href="#">Links</a>
+                    <ul class="dropdown-links">
+                        @if (Session["UserId"] == null)
+                        {
+                            <li><a href="#signin-modal" data-toggle="modal">Sign in / Sign up</a></li>
+                        }
+                        else
+                        {
+                            <li><a href="">Welcome back, @Session["UserFName"]   </a>   | <a href="/FEAuth/Logout">   Logout</a></li>
+                        }
+                    </ul>
+                </li>
+            </ul><!-- End .top-menu -->
+        </div><!-- End .header-right -->
+
+    </div><!-- End .container -->
+</div><!-- End .header-top -->
+<style>
+    .li-navs:hover {
+        background-color: #808080
+    }
+</style>
+<div class="header-middle">
+    <div class="container">
+        <div class="header-left">
+            <button class="mobile-menu-toggler">
+                <span class="sr-only">Toggle mobile menu</span>
+                <i class="icon-bars"></i>
+            </button>
+
+            @* LOGO *@
+            <a href="/" class="logo">
+                <img src="~/Content/assets/images/demos/demo-20/logo.png" alt="Molla Logo" width="105" height="25">
+            </a>
+        </div><!-- End .header-left -->
+
+        <div class="header-right">
+            <div class="header-search-wrapper search-wrapper-wide" style="width: 50vw">
+                <div class="dropdown me-2 w-100">
+                    <input type="text" class="form-control form-control-sm" id="searchBox" placeholder="Tìm kiếm ..." data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" autocomplete="off">
+                    <div class="dropdown-menu dropdown-menu-xxl dropdown-menu-middle p-1 border-0" style="width: 100%; font-size: 1.2rem !important">
+                        <ul class="nav-items mb-0" id="searchList" style="overflow-y: auto; max-height: 400px">
+                        </ul>
+                    </div>
+                </div>
+            </div><!-- End .header-search-wrapper -->
+
+
+            <div class="header-dropdown-link">
+                @* NOTIFICATION *@
+                @if (Session["UserId"] != null)
+                {
+
+                    <div class="dropdown cart-dropdown">
+                        <a href="/FEOrder/Cart" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
+                                </svg>
+                                    <span class="cart-count badge" hidden  id="noti-count"></span>
+                            </div>
+                            <p>Notification</p>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0 fs-sm show" aria-labelledby="page-header-notifications-dropdown" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 32.8px, 0px);" data-popper-placement="bottom-end">
+                            <div class="p-2  border-bottom text-center rounded-top">
+                                <h5 class="dropdown-header text-uppercase" style=" font-size: 12px;">Notification</h5>
+                            </div>
+                            <ul class="nav-items mb-0">
+                                @if (Session["UserId"] != null)
+                                {
+                                    var id = int.Parse(Session["UserId"].ToString());
+                                    var notiList = db.Notifications.Where(a => a.notification_sender_id == id).ToList().OrderByDescending(a => a.notification_id);
+                                    foreach (var item in notiList)
+                                    {
+                                        <li class="bg-body-light pl-2">
+                                            <a data-notification-id="3" class="text-dark d-flex py-2 notification" id="redirectPendingPosts">
+                                                <div class="flex-shrink-0 me-2 ms-3">
+                                                    <i class="bi bi-pen text-success"></i>
+                                                </div>
+                                                <div class="flex-grow-1 pe-2">
+                                                    <div style="font-size:14px; font-weight:500" >@item.notification_title</div>
+                                                    <p style="font-size:13px;">@item.notification_message</p>
+                                                    <span class="fw-medium text-muted" style="font-size:12px">@item.notification_created_date</span>
+                                                </div>
+                                            </a>
+                                        </li>
+
+                                    }
+
+                                }
+
+                            </ul>
+                            <!-- <div class="p-2 border-top text-center">
+                              <a class="d-inline-block fw-medium" href="javascript:void(0)">
+                                <i class="fa fa-fw fa-arrow-down me-1 opacity-50"></i> Load More..
+                              </a>
+                            </div> -->
+                        </div>
+                    </div><!-- End .cart-dropdown -->
+                }
+                @* ACCOUNT *@
+                <div class="account">
+                    @if (Session["UserId"] != null)
+                    {
+
+                        <a href="/FEUser/UserProfile" title="My account">
+                            <div class="icon">
+                                <i class="icon-user"></i>
+                            </div>
+                            <p>Account</p>
+                        </a>
+                    }
+                </div><!-- End .compare-dropdown -->
+                @* WISHLIST *@
+                <div class="wishlist">
+                    <a href="/FEWishlist/Index" title="Wishlist">
+                        <div class="icon">
+                            <i class="icon-heart-o"></i>
+                            <span class="wishlist-count badge" hidden id="wishlist-count"></span>
+                        </div>
+                        <p>Wishlist</p>
+                    </a>
+                </div><!-- End .compare-dropdown -->
+                @* CART *@
+                <div class="dropdown cart-dropdown">
+                    <a href="/FEOrder/Cart" class="dropdown-toggle" role="button">
+                        <div class="icon">
+                            <i class="icon-shopping-cart"></i>
+                             <span class="cart-count" hidden id="cart-count"></span>
+                        </div>
+                        <p>Cart</p>
+                    </a>
+
+                </div><!-- End .cart-dropdown -->
+            </div>
+        </div><!-- End .header-right -->
+    </div><!-- End .container -->
+</div><!-- End .header-middle -->
+
+<div class="header-bottom sticky-header">
+    <div class="container">
+        <div style="background-color: #333; display: flex; width: 100%;">
+            <div class="header-left">
+                <div class="dropdown category-dropdown">
+                    <a href="/FEArtwork/GetCategory/" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static" title="Browse Categories">
+                        Browse Categories
+                    </a>
+
+                    <div class="dropdown-menu">
+                        <nav class="side-nav">
+                            <ul class="menu-vertical sf-arrows">
+                                @{
+                                    var cateList = db.Categories.ToList();
+                                }
+                                @foreach (var cate in cateList)
+                                {
+                                    <li class="item-lead"><a href="/FEArtwork/Category/@cate.category_id">@cate.category_name</a></li>
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-center">
+
+                <nav class="main-nav">
+                    <ul class="menu sf-arrows">
+                        <li class="megamenu-container active">
+                            <a href="/">Home</a>
+
+                            
+                        </li>
+
+                        <li>
+                            <a href="/FEArtwork/Artist/" class="sf-with-ul" title="Artist">Artist</a>
+                            <ul>
+                                @{
+                                    var artist = db.Artists.ToList();
+                                }
+                                @foreach (var art in artist)
+                                {
+                                    <li><a style="font-size:14px;font-weight:500;" href="/FEArtwork/Artist/@art.artist_id">@art.artist_name</a></li>
+                                }
+                            </ul>
+
+                        </li>
+
+
+                        <li>
+                            <a href="/FEArtwork/ArtworkList">Galleries</a>
+                            <ul>
+                                @{
+                                    var gallery = db.Galleries.ToList();
+                                }
+                                @foreach (var gal in gallery)
+                                {
+                                    <li><a style="font-size:14px;font-weight:500;" href="/FEArtwork/GalleryDetail/@gal.gallery_id">@gal.gallery_name</a></li>
+                                }
+                            </ul>
+
+                        </li>
+                        <li>
+                            <a href="/FEHome/About">About us</a>
+                        </li>
+                        <li>
+                            <a href="/FEHome/Contact">Contact us</a>
+                        </li>
+                    </ul><!-- End .menu -->
+                </nav><!-- End .main-nav -->
+            </div>
+            <div class="header-right">
+                <i class="la la-lightbulb-o"></i><p>Clearance Up to 30% Off</p>
+            </div><!-- End .header-right -->
+        </div>
+    </div><!-- End .container -->
+</div><!-- End .header-bottom -->

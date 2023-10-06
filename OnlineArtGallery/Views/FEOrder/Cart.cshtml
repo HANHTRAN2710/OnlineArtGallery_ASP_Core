@@ -1,0 +1,111 @@
+﻿@using OnlineArtGallery.Models.Entities;
+@section main
+{
+    <main class="main">
+        <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+            <div class="container">
+                <h1 class="page-title">Shopping Cart<span>Shop</span></h1>
+            </div><!-- End .container -->
+        </div><!-- End .page-header -->
+        <nav aria-label="breadcrumb" class="breadcrumb-nav">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+                </ol>
+            </div><!-- End .container -->
+        </nav><!-- End .breadcrumb-nav -->
+
+        <div class="page-content">
+            <div class="carts">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <table class="table table-cart table-mobile">
+                                <thead>
+                                    <tr>
+                                        <th style="width:50px">Id</th>
+                                        <th style="width:300px">Artwork</th>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Price</th>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                @{ 
+                                    int x = 0;
+                                }
+                                    @foreach (var item in ViewBag.Cartlist)
+                                    {
+                                        x += 1;
+                                        <tr>
+                                            <td>@x</td>
+                                           <td>
+                                             <img style="height:150px" src="~/Content/assets/images/artwork/@item.ArtworkImage" alt="Product image">
+                                                     
+                                            </td>
+                                            <td>
+                                                <a href="/FEArtwork/ArtworkDetail/@item.ArtworkId">@item.ArtworkName</a>
+                                            </td>
+                                            <td>
+                                                @if (item.ArtworkStatus == 1)
+                                                {
+                                                    <span class="badge badge-success p-3">On Sale</span>
+                                                }
+                                                else if (item.ArtworkStatus == 2)
+                                                {
+                                                    <span class="badge badge-warning p-3">Won Auction</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary p-3">Sold out</span>
+                                                }
+                                            </td>
+                                            <td class="total-col">
+                                               $ @if(item.ArtworkStatus == 1){
+                                                    @item.ArtworkPrice
+                                                 }
+                                            </td>
+                                            <td class="remove-col"><a href="/FEOrder/Delete/@item.CartId" class="btn-remove"><i class="icon-close"></i></a></td>
+                                        </tr>
+
+                                    }
+
+                                </tbody>
+                            </table><!-- End .table table-wishlist -->
+
+                       
+                        </div><!-- End .col-lg-9 -->
+                        <aside class="col-lg-3">
+                            <div class="summary summary-cart">
+                                <h3 class="summary-title">Cart Total</h3><!-- End .summary-title -->
+
+                                <table class="table table-summary">
+                                    <tbody>
+                                        <tr class="summary-subtotal">
+                                            <td>Subtotal:</td>
+                                            <td>$@ViewBag.Amount</td>
+                                        </tr><!-- End .summary-subtotal -->
+                                        <tr class="summary-shipping">
+                                            <td>Shipping:</td>
+                                            <td>Freeship</td>
+                                        </tr>
+                                        <tr class="summary-total">
+                                            <td>Total:</td>
+                                            <td>$@ViewBag.Amount</td>
+                                        </tr><!-- End .summary-total -->
+                                    </tbody>
+                                </table><!-- End .table table-summary -->
+
+                                <a href="https://localhost:44303/FEOrder/Checkout" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
+                            </div><!-- End .summary -->
+                        </aside><!-- End .col-lg-3 -->
+                        
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+            </div><!-- End .cart -->
+        </div><!-- End .page-content -->
+    </main>
+}

@@ -1,0 +1,666 @@
+﻿
+@{
+    ViewBag.Title = "ArtworkDetail";
+}
+
+@section main
+{
+   <input hidden id="artwork_status" value="@ViewBag.Artwork.artwork_status"/>
+    <main class="main">
+        <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+            <div class="container d-flex align-items-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Products</a></li>
+                    <li class="breadcrumb-item"><a href="/FEArtwork/Category/"></a></li>
+                </ol>
+
+
+            </div><!-- End .container -->
+        </nav><!-- End .breadcrumb-nav -->
+
+        <div class="page-content container">
+            <div class="container">
+                <div class="product-details-top">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="">
+                                <div class="row">
+                                    <figure style="width:100%;" class="product-main-image">
+                                        <img id="product-zoom" style=" height:550px" src="~/Content/assets/images/artwork/@ViewBag.Artwork.artwork_image" alt="product image">
+
+                                    </figure><!-- End .product-main-image -->
+
+
+                                </div><!-- End .row -->
+                            </div><!-- End .product-gallery -->
+                        </div><!-- End .col-md-6 -->
+
+                        <div class="col-md-6">
+                            <div class="product-details p-5">
+                                <h1 class="product-title">@ViewBag.Artwork.artwork_name</h1><!-- End .product-title -->
+
+                                <div class="ratings-container">
+                                    <div class="ratings">
+                                        <div class="ratings-val" style="width: @ViewBag.Percent%;"></div><!-- End .ratings-val -->
+                                    </div><!-- End .ratings -->
+                                    <a class="ratings-text" href="#product-review-link" id="review-link">( @ViewBag.RevCount Reviews )</a>
+                                </div><!-- End .rating-container -->
+
+
+                                @if (ViewBag.Artwork.artwork_status == 2)
+                                {
+                                    <div class="text-center mb-3">
+                                        <span hidden id="start-date" class="start-date">@ViewBag.Auction.auction_start_date</span>
+                                        <span hidden id="end-date" class="end-date">@ViewBag.Auction.auction_end_date</span>
+                                        <div id="countdown" class="bg-dark text-center text-white countdown" style="opacity: .5;" data-start="@ViewBag.Auction.auction_start_date" data-end="@ViewBag.Auction.auction_end_date">
+                                            <strong>
+
+                                            </strong>
+                                        </div>
+                                        <div class="progress push" style="height: 10px;">
+                                            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-danger progressbar" role="progressbar" style="width: 45.625%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="product-price mb-2">
+                                        <p style="font-weight: 500; margin-right: 10px ">Reserve Price:</p>
+                                        $ @ViewBag.Auction.auction_reserve_price
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="product-price">
+                                        $ @ViewBag.Artwork.artwork_price
+                                    </div><!-- End .product-price -->
+
+                                }
+
+                                <div class="product-content">
+                                    <p>@ViewBag.Artwork.artwork_description</p>
+                                </div><!-- End .product-content -->
+
+                                <div>
+                                    <div class="d-flex" style="margin-bottom: 8px;">
+                                        <p style="font-weight: 500; margin-right: 10px "> Artist: </p>
+                                        <p> @ViewBag.Artist.artist_name</p>
+                                    </div>
+                                    <div class="d-flex" style="margin-bottom: 8px;">
+                                        <p style="font-weight:500; margin-right:10px "> Created date: </p>
+                                        <p> @ViewBag.Artwork.artwork_date</p>
+                                    </div>
+                                    <div class="d-flex" style="margin-bottom: 8px;">
+                                        <p style="font-weight: 500; margin-right: 10px "> Dimensions: </p>
+                                        <p> @ViewBag.Artwork.artwork_dimensions (cm)</p>
+                                    </div>
+                                </div>
+                                @if (ViewBag.Artwork.artwork_status == 2)
+                                {
+                                    <div>
+                                        <div class="d-flex" style="margin-bottom: 8px;">
+                                            <p style="font-weight: 500; margin-right: 10px "> Current bid: </p>
+                                            <p id="current-bid">$@ViewBag.Auction.auction_current_bid</p>
+                                        </div>
+                                    </div>
+                                }
+
+
+
+
+                            <div class="product-details-action d-flex" style=" margin-top: 3rem;">
+
+
+                                @if (ViewBag.Artwork.artwork_status == 2)
+                                {
+                                    if (Session["UserId"] != null)
+                                    {
+                                        <div>
+                                            <div class="d-flex">
+                                                <p style="font-weight: 500; margin-right: 10px; margin-top: 5px;"> Bid: </p>
+                                                <input style="text-align: center; " id="bid-amount" type="number" min="@ViewBag.Auction.auction_current_bid" max="10000000" required onkeypress="return validateNumber(e)" onpaste="return false;" oncopy="return false" />
+                                                <input id="auction-id" value="@ViewBag.Auction.auction_id" hidden />
+                                                <a style="margin-left: 10px; min-width: 50px; " href="" class="btn btn-primary" id="bid-submit">Go</a>
+                                            </div>
+                                            <div>
+                                                <p class="text-danger" style="margin-top: 10px;font-weight: 500;" id="text-error"></p>
+                                            </div>
+                                        </div>
+                                        <a href="" data-wishlist-id="@ViewBag.Artwork.artwork_id" class="btn-product btn-wishlist wishlists"><span>Add to Wishlist</span></a>
+
+
+                                    }
+                                    else
+                                    {
+                                        <a href="#signin-modal" data-toggle="modal" class=" btn-product btn-cart"><span>Sign in / Sign up</span></a>
+                                    }
+                                }
+                                else
+                                {
+
+
+                                    if (Session["UserId"] != null)
+                                    {
+                                        <a href="" data-cart-id="@ViewBag.Artwork.artwork_id" class="btn-product btn-cart cart"><span>add to cart</span></a><!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-primary btn ml-5" data-toggle="modal" data-target="#exampleModal">
+                                            BUY NOW
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" style="max-width:1000px">
+                                                <div class="modal-content">
+                                                    <div class="modal-body p-3">
+                                                        <div class="">
+                                                            <div class="checkout">
+                                                                <div class="container">
+                                                                    <form id="checkout">
+                                                                        <div class="row">
+                                                                            <div class="col-lg-7">
+                                                                                <h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-6">
+                                                                                        <label>First Name *</label>
+                                                                                        <input type="text" id="fname" class="form-control" value="@ViewBag.User.user_fname">
+                                                                                    </div><!-- End .col-sm-6 -->
+
+                                                                                    <div class="col-sm-6">
+                                                                                        <label>Last Name *</label>
+                                                                                        <input type="text" id="lname" class="form-control" value="@ViewBag.User.user_lname">
+                                                                                    </div><!-- End .col-sm-6 -->
+                                                                                </div><!-- End .row -->
+
+                                                                                <label>Address *</label>
+                                                                                <input type="text" id="address" class="form-control">
+
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-6">
+                                                                                        <label>Email address *</label>
+                                                                                        <input type="email" id="checkoutemail" class="form-control" value="@ViewBag.User.user_email">
+                                                                                    </div><!-- End .col-sm-6 -->
+
+                                                                                    <div class="col-sm-6">
+                                                                                        <label>Phone *</label>
+                                                                                        <input type="tel" id="checkoutphone" class="form-control" value="@ViewBag.User.user_phone">
+                                                                                    </div><!-- End .col-sm-6 -->
+                                                                                </div><!-- End .row -->
+                                                                            </div><!-- End .col-lg-9 -->
+                                                                            <aside class="col-lg-5">
+                                                                                <div class="summary">
+                                                                                    <h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
+
+                                                                                    <table class="table table-summary">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th>Product</th>
+                                                                                                <th>Total</th>
+                                                                                            </tr>
+                                                                                        </thead>
+
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td><a href="/FEArtwork/ArtworkDetail/@ViewBag.Artwork.artwork_id">@ViewBag.Artwork.artwork_name</a></td>
+                                                                                                <td>$@ViewBag.Artwork.artwork_price</td>
+                                                                                            </tr>
+
+
+                                                                                            <tr class="summary-subtotal">
+                                                                                                <td>Subtotal:</td>
+                                                                                                <td>$@ViewBag.Artwork.artwork_price.00</td>
+                                                                                            </tr><!-- End .summary-subtotal -->
+                                                                                            <tr>
+                                                                                                <td>Shipping:</td>
+                                                                                                <td>Free shipping</td>
+                                                                                            </tr>
+                                                                                            <tr class="summary-total">
+                                                                                                <td>Total:</td>
+                                                                                                <td>$@ViewBag.Artwork.artwork_price.00</td>
+                                                                                            </tr><!-- End .summary-total -->
+                                                                                        </tbody>
+                                                                                    </table><!-- End .table table-summary -->
+
+                                                                                    <div class="accordion-summary" id="accordion-payment">
+                                                                                        <div class="card">
+                                                                                            <div class="card-header" id="heading-1">
+                                                                                                <h2 class="card-title">
+                                                                                                    <a role="button" data-toggle="collapse" href="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
+                                                                                                        VNPay
+                                                                                                    </a>
+                                                                                                </h2>
+                                                                                            </div><!-- End .card-header -->
+                                                                                            <div id="collapse-1" class="collapse show" aria-labelledby="heading-1" data-parent="#accordion-payment">
+                                                                                                <div class="card-body">
+                                                                                                    VNPAY applies modern and breakthrough technology in the field of electronic payment in order to
+                                                                                                    building a diverse service ecosystem in terms of products, utilities, and experiences
+                                                                                                    superior service to serve customers and partners.
+                                                                                                </div><!-- End .card-body -->
+                                                                                            </div><!-- End .collapse -->
+                                                                                        </div><!-- End .card -->
+                                                                                    </div><!-- End .accordion -->
+                                                                                    <input id="artworkId" hidden value="@ViewBag.Artwork.artwork_id" />
+                                                                                    <input id="price" hidden value="@ViewBag.Artwork.artwork_price" />
+                                                                                    <button type="submit" id="submitCheckout" data-total="@ViewBag.Artwork.artwork_price" class="btn btn-outline-primary-2 btn-order btn-block">
+                                                                                        <span class="btn-text">Place Order</span>
+                                                                                        <span class="btn-hover-text">Proceed to Checkout</span>
+                                                                                        <span class="" id="checkoutspinner" role="status" aria-hidden="true"></span>
+                                                                                    </button>
+                                                                                </div><!-- End .summary -->
+                                                                            </aside><!-- End .col-lg-3 -->
+                                                                        </div><!-- End .row -->
+                                                                    </form>
+                                                                </div><!-- End .container -->
+                                                            </div><!-- End .checkout -->
+                                                        </div><!-- End .page-content -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <a href="#signin-modal" data-toggle="modal"  class="btn-product btn-cart"><span>add to cart</span></a>
+                                        <a href="#signin-modal" data-toggle="modal" class="ml-5 btn-product btn-cart"><span>Paynow</span></a><!-- Button trigger modal -->
+                                    }
+                                    <a href="" data-wishlist-id="@ViewBag.Artwork.artwork_id" class="btn-product btn-wishlist wishlists"><span>Add to Wishlist</span></a>
+
+                                }
+
+
+
+
+
+                            </div><!-- End .product-details-action -->
+
+
+                            </div><!-- End .product-details -->
+                        </div><!-- End .col-md-6 -->
+                    </div><!-- End .row -->
+                </div><!-- End .product-details-top -->
+
+                <div class="product-details-tab">
+                    <ul class="nav nav-pills justify-content-center" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="product-desc-link" data-toggle="tab" href="#product-desc-tab" role="tab" aria-controls="product-desc-tab" aria-selected="true">Description</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="product-info-link" data-toggle="tab" href="#product-info-tab" role="tab" aria-controls="product-info-tab" aria-selected="false">Additional information</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="product-shipping-link" data-toggle="tab" href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab" aria-selected="false">Shipping &amp; Returns</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab" role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews (@ViewBag.RevCount)</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="product-desc-tab" role="tabpanel" aria-labelledby="product-desc-link">
+                            <div class="product-desc-content">
+                                <h3>Product Information</h3>
+                                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. </p>
+                                <ul>
+                                    <li>Nunc nec porttitor turpis. In eu risus enim. In vitae mollis elit. </li>
+                                    <li>Vivamus finibus vel mauris ut vehicula.</li>
+                                    <li>Nullam a magna porttitor, dictum risus nec, faucibus sapien.</li>
+                                </ul>
+
+                                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. </p>
+                            </div><!-- End .product-desc-content -->
+                        </div><!-- .End .tab-pane -->
+                        <div class="tab-pane fade" id="product-info-tab" role="tabpanel" aria-labelledby="product-info-link">
+                            <div class="product-desc-content">
+                                <h3>Information</h3>
+                                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. </p>
+
+                                <h3>Fabric &amp; care</h3>
+                                <ul>
+                                    <li>Faux suede fabric</li>
+                                    <li>Gold tone metal hoop handles.</li>
+                                    <li>RI branding</li>
+                                    <li>Snake print trim interior </li>
+                                    <li>Adjustable cross body strap</li>
+                                    <li> Height: 31cm; Width: 32cm; Depth: 12cm; Handle Drop: 61cm</li>
+                                </ul>
+
+                                <h3>Size</h3>
+                                <p>one size</p>
+                            </div><!-- End .product-desc-content -->
+                        </div><!-- .End .tab-pane -->
+                        <div class="tab-pane fade" id="product-shipping-tab" role="tabpanel" aria-labelledby="product-shipping-link">
+                            <div class="product-desc-content">
+                                <h3>Delivery &amp; returns</h3>
+                                <p>
+                                    We deliver to over 100 countries around the world. For full details of the delivery options we offer, please view our <a href="#">Delivery information</a><br>
+                                    We hope you’ll love every purchase, but if you ever need to return an item you can do so within a month of receipt. For full details of how to make a return, please view our <a href="#">Returns information</a>
+                                </p>
+                            </div><!-- End .product-desc-content -->
+                        </div><!-- .End .tab-pane -->
+                        <div class="tab-pane fade" id="product-review-tab" role="tabpanel" aria-labelledby="product-review-link">
+                            <div class="reviews">
+                                <h3>Reviews (@ViewBag.RevCount)</h3>
+                            @foreach(var item in ViewBag.Review)
+                            {
+                                string lname = item.User.user_lname;
+                                char firstCharacter = lname[0];
+                                double star = (double)item.rating_star;
+                                string percent = ((star / 5) * 100).ToString() + "%";
+                                <div class="review">
+                                    <div class="row no-gutters">
+                                        <div class="col-auto">
+                                            <h4><a>@item.User.user_fname @firstCharacter.</a></h4>
+                                            <div class="ratings-container">
+                                                <div class="ratings">
+                                                    <div class="ratings-val" style="width: @percent"></div><!-- End .ratings-val -->
+                                                </div><!-- End .ratings -->
+                                            </div><!-- End .rating-container -->
+                                        </div><!-- End .col -->
+                                        <div class="col">
+                                            <h4>@item.rating_title</h4>
+
+                                            <div class="review-content">
+                                                <p>@item.rating_comment</p>
+                                            </div><!-- End .review-content -->
+
+                                        </div><!-- End .col-auto -->
+                                    </div><!-- End .row -->
+                                </div><!-- End .review -->
+
+                            }
+
+                           
+                                <div>
+                                    <form method="Post" action="/FEArtwork/Rating">
+                                        <div>
+                                            <h3 class="title title-simple text-left text-normal">Add a Review </h3>
+                                            <input hidden name="artwork_id" value="@ViewBag.Artwork.artwork_id"/>
+                                            <div class="row mb-2">
+                                                <div class="col-6">
+                                                    <input type="text" name="rating_title"  placeholder="Title *" required="" class="form-control">
+                                                </div>
+                                                <div class="col-6">
+                                                    <select class="form-control" name="rating_star">
+                                                        <option value="5" selected>5 stars </option>
+                                                        <option value="4">4 stars </option>
+                                                        <option value="3">3 stars </option>
+                                                        <option value="2">2 stars </option>
+                                                        <option value="1">1 star </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <textarea name="rating_comment" cols="30" rows="6" placeholder="Comment *" required="" class="form-control mb-2"></textarea>
+                                            <button type="submit" class="btn btn-primary"><span>Submit</span><i class="icon-long-arrow-right"></i></button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div><!-- End .reviews -->
+                        </div><!-- .End .tab-pane -->
+                    </div><!-- End .tab-content -->
+                </div><!-- End .product-details-tab -->
+
+                <h2 class="title text-center mb-4">You May Also Like</h2><!-- End .title text-center -->
+
+                <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow owl-loaded owl-drag" data-toggle="owl" data-owl-options="{
+                            &quot;nav&quot;: false,
+                            &quot;dots&quot;: true,
+                            &quot;margin&quot;: 20,
+                            &quot;loop&quot;: false,
+                            &quot;responsive&quot;: {
+                                &quot;0&quot;: {
+                                    &quot;items&quot;:1
+                                },
+                                &quot;480&quot;: {
+                                    &quot;items&quot;:2
+                                },
+                                &quot;768&quot;: {
+                                    &quot;items&quot;:3
+                                },
+                                &quot;992&quot;: {
+                                    &quot;items&quot;:4
+                                },
+                                &quot;1200&quot;: {
+                                    &quot;items&quot;:4,
+                                    &quot;nav&quot;: true,
+                                    &quot;dots&quot;: false
+                                }
+                            }
+                        }">
+                    <!-- End .product -->
+                    <!-- End .product -->
+                    <!-- End .product -->
+                    <!-- End .product -->
+                    <!-- End .product -->
+
+                    <div class="owl-stage-outer">
+                        <div class="owl-stage" style="transform: translate3d(0px, 0px, 0px); transition: all 0s ease 0s; width: 1485px;">
+                            @foreach (var item in ViewBag.ArtworkList)
+                            {
+
+                                <div class="owl-item active" style="width: 277px; margin-right: 20px;">
+                                    <div class="product product-7 text-center">
+                                        <figure class="product-media" style=" height: 250px;">
+                                            <span class="product-label label-new">New</span>
+                                            <a href="/FEArtwork/ArtworkDetail/@item.artwork_id">
+                                                <img src="~/Content/assets/images/artwork/@item.artwork_image" alt="Product image" class="product-image">
+                                            </a>
+
+                                            <div class="product-action-vertical">
+                                                <a href="" data-wishlist-id="@item.artwork_id" class="btn-product-icon btn-wishlist btn-expandable wishlists"><span>add to wishlist</span></a>
+                                                
+                                            </div><!-- End .product-action-vertical -->
+
+                                            <div class="product-action">
+                                                <a href="#" class="/"><span>add to cart</span></a>
+                                            </div><!-- End .product-action -->
+                                        </figure><!-- End .product-media -->
+
+                                        <div class="product-body">
+                                            <div class="product-cat">
+                                                <a href="#">Women</a>
+                                            </div><!-- End .product-cat -->
+                                            <h3 class="product-title"><a href="/FEArtwork/ArtworkDetail/@item.artwork_id"> @item.artwork_name</a></h3><!-- End .product-title -->
+                                            <div class="product-price">
+                                                $@item.artwork_price
+                                            </div><!-- End .product-price -->
+                                            <div class="ratings-container mt-1">
+                                                <div class="ratings">
+                                                    <div class="ratings-val star-id" data-star-id="@item.artwork_id" style="width:0%"></div><!-- End .ratings-val -->
+                                                </div><!-- End .ratings -->
+                                                <span class="ratings-text star-count" data-star-count="@item.artwork_id"></span>
+                                            </div><!-- End .rating-container -->
+
+
+                                        </div><!-- End .product-body -->
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div><div class="owl-nav"><button type="button" role="presentation" class="owl-prev disabled"><i class="icon-angle-left"></i></button><button type="button" role="presentation" class="owl-next"><i class="icon-angle-right"></i></button></div><div class="owl-dots disabled"></div>
+                </div><!-- End .owl-carousel -->
+            </div><!-- End .container -->
+        </div><!-- End .page-content -->
+    </main>
+    <script src="/Content/js/auction.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var stars = document.querySelectorAll('.star-id');
+            stars.forEach(function (star) {
+                var id = star.getAttribute('data-star-id');
+                $.ajax({
+                    url: '/FEArtwork/Star',
+                    method: 'POST',
+                    data: { id: id },
+                    success: function (response) {
+                        var starWidth = response + "%";
+                        star.style.width = starWidth;
+                    }, error: function (error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var ratings = document.querySelectorAll('.star-count');
+            ratings.forEach(function (rating) {
+                var id = rating.getAttribute('data-star-count');
+                $.ajax({
+                    url: '/FEArtwork/RatingCount',
+                    method: 'POST',
+                    data: { id: id },
+                    success: function (response) {
+                        rating.textContent = "(" + response + " Reviews)";
+
+                    }, error: function (error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+
+        function formatDate(dateTimeString) {
+
+            var dateParts = dateTimeString.split(" ")[0].split("-");
+            var timeParts = dateTimeString.split(" ")[1].split(":");
+
+            var year = parseInt(dateParts[0]);
+            var month = parseInt(dateParts[1])
+            var day = parseInt(dateParts[2]);
+            var hours = parseInt(timeParts[0]);
+            var minutes = parseInt(timeParts[1]);
+
+            var date = new Date(year, month - 1, day, hours, minutes);
+            return date;
+        }
+
+        function timeDiffSecond(start, end) {
+            var startDate = new Date(start);
+            var endDate = new Date(end);
+            var timeDiff = endDate.getTime() - startDate.getTime();
+            var hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
+            var minutesDiff = Math.floor((timeDiff / (1000 * 60)) % 60);
+            var secondsDiff = Math.floor((timeDiff / 1000) % 60);
+            var totalSecondsDiff = (hoursDiff * 3600) + (minutesDiff * 60) + secondsDiff;
+            return totalSecondsDiff;
+
+        }
+        $(document).ready(function () {
+
+            var status = $('#artwork_status').val();
+            if (status == 2) {
+                setInterval(function () {
+                    var currentDate = new Date();
+                    var endDate = document.getElementById('end-date').textContent;
+                    var startDate = document.getElementById('start-date').textContent;
+                    var formattedDate = formatDate(endDate);
+                    if (formattedDate <= currentDate) {
+                        isClickable = false;
+                        document.getElementById('bid-amount').disabled = true;
+                        var widthPercentage = 100;
+                        document.getElementById('progress-bar').style.width = widthPercentage + "%";
+                        document.getElementById('bid-submit').disabled = true
+                    } else {
+                        var timeAuction = timeDiffSecond(startDate, endDate)
+                        var timeCurrent = timeDiffSecond(currentDate, endDate);
+                        var percentage = timeCurrent / timeAuction * 100;
+                        var widthPercentage = 100 - percentage;
+                        document.getElementById('progress-bar').style.width = widthPercentage + "%";
+                    };
+
+                }, 1000);
+
+            }
+
+        });
+
+        var isClickable = true;
+        $("#bid-submit").click(function (e) {
+
+            e.preventDefault();
+            var id = document.getElementById('auction-id').value;
+            var amount = document.getElementById('bid-amount').value;
+            var current = document.getElementById('current-bid').textContent;
+            var currentAmount = current.substring(1);
+            var currentBid = parseInt(currentAmount) + 50;
+            var step = (amount - currentBid) % 50;
+            if (amount >= currentBid & step == 0) {
+                if (isClickable) {
+                    isClickable = false;
+                    $.ajax({
+                        url: "/FEAuction/Create",
+                        method: "Post",
+                        data: {
+                            id: id,
+                            auction_amount: amount
+                        }
+                    }).done(function (res) {
+                        $('.toast-body').text(res.noti);
+                        $('#toast').toast('show');
+                        $('#current-bid').text('$' + res.bid);
+                        var min = parseInt(res.bid) + 50;
+                        $('#bid-amount').attr('min', min);
+
+                        setTimeout(function () {
+                            isClickable = true;
+                        }, 10000);
+                    });
+                }
+            } else {
+                var textError = document.getElementById('text-error');
+                textError.textContent = "Your bid must be greater than or equal to " + currentBid + "!";
+            };
+        });
+
+    </script>
+    <script>
+        $(document).ready(function ($) {
+            $('#checkout').submit(function (event) {
+                event.preventDefault();
+                $('#checkoutspinner').addClass('spinner-border spinner-border-sm');
+                $('#submitCheckout').prop('disabled', true);
+
+                var fname = $('#fname').val().trim();
+                var lname = $('#lname').val().trim();
+                var address = $('#address').val().trim();
+                var email = $('#checkoutemail').val().trim();
+                var phone = $('#checkoutphone').val().trim();
+                var total = $('#submitCheckout').data('total');
+                var artwork_id = $('#artworkId').val().trim();
+                var price = $('#price').val().trim();
+
+                if (fname == '' || lname == '' || email == '' || phone == '' || address == '') {
+                    $('.toast-body').text("Shipping Information is Require !!!");
+                    $('#toast').toast('show');
+                    $('#toast').removeClass('bg-primary').addClass('bg-danger');
+                    $('#checkoutspinner').removeClass('spinner-border spinner-border-sm');
+                    $('#submitCheckout').prop('disabled', false);
+                    return;
+                }
+
+                $.ajax({
+                    method: "POST",
+                    url: "/FEOrder/PayNow",
+                    data: {
+                        order_phone: phone,
+                        order_address: address,
+                        order_email: email,
+                        order_fname: fname,
+                        order_lname: lname,
+                        order_total: total,
+                        artwork_id: artwork_id,
+                        price: price
+                    }
+                }).done(function (data) {
+                    console.log('Success');
+                })
+            })
+        })
+    </script>
+   
+
+}
+
