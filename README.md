@@ -13,3 +13,5 @@
 - Có thể thích các tranh mà mình định mua , khi bấm vào icon yêu thích trên đầu trang thì người dùng có thể mua các sản phẩm mình đã thích 1 cách dễ dàng.
 - Có icon giỏ hàng , người dùng có thể biết được mình đã chọn mua bao nhiêu cái để thanh toán tính tiền 1 cách dễ dàng .
 - Trong profile của người dùng có 1 trang lịch sử mua hàng , người dùng có thể xem lại các sản phẩm nào mình đã mua.
+  [image](https://github.com/HANHTRAN2710/OnlineArtGallery_ASP_Core/assets/103866643/92d0ffe5-7f3c-4d7a-8e1e-ed8dadda9fd8)
+
